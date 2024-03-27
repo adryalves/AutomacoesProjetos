@@ -15,10 +15,17 @@ using System.Threading.Tasks;
 
 namespace AutomacoesProjetos
 {
+
+    
     public class WebPersonalizado : Web
     {
+
+        public static List<string> ListaIdiomas;
+
         List<string> resultados = new List<string>();
-        public EasyReturn.Web PutLangToTranslate(TypeElement typeElement, string element, string lang, int timeout = 6)
+
+        // Metodos do projeto tradução:
+        public EasyReturn.Web PutLangToTranslate(TypeElement typeElement, string element, string lang, int timeout = 3)
         {
             try
             {
@@ -42,18 +49,19 @@ namespace AutomacoesProjetos
 
                 IList<IWebElement> linkItems = webElement.FindElements(By.TagName("li"));
 
-
+                 
                 List<string> topics = new List<string>();
                 foreach (IWebElement item in linkItems)
                 {
                     IWebElement spansInsideLi = item.FindElement(By.ClassName("lang-label"));
                     topics.Add(spansInsideLi.Text);
-
+                    ListaIdiomas.Add(spansInsideLi.Text);
 
                     if (spansInsideLi.Text == lang)
                     {
                         item.Click();
                         Thread.Sleep(2000);
+                        break;
                     }
 
                 }
@@ -68,6 +76,7 @@ namespace AutomacoesProjetos
                 {
                     dataTable.Rows.Add(str);
                 }
+                //var teste = dataTable.Rows;
                 return new EasyReturn.Web
                 {
                     driver = driver,
@@ -118,31 +127,31 @@ namespace AutomacoesProjetos
                 foreach (IWebElement item in linkItems.Take(5))
                 {
                     //WebDriverWait webDriverWait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
-                    IWebElement spansInsideLi = item.FindElement(By.ClassName("lang-label"));
-                    topics.Add(spansInsideLi.Text);
+                   // IWebElement spansInsideLi = item.FindElement(By.ClassName("lang-label"));
+                   // topics.Add(spansInsideLi.Text);
                     ClicarBotao(element, i, timeout);
-                    PreencherLista(textoOriginal, topics[i]);
+                    //PreencherLista(textoOriginal, topics[i]);
                     i++;
                 }
 
                 
 
-                DataTable dataTable = new DataTable();
+                
 
                
-                dataTable.Columns.Add("StringColumn", typeof(string)); // Change "StringColumn" to your desired column name
+               // dataTable.Columns.Add("StringColumn", typeof(string)); // Change "StringColumn" to your desired column name
 
                 // Add rows from List<string> to DataTable
-                foreach (string str in resultados)
-                {
-                    dataTable.Rows.Add(str);
-                }
+                //foreach (string str in resultados)
+                //{
+                //    dataTable.Rows.Add(str);
+                //}
                 return new EasyReturn.Web
                 {
                     driver = driver,
                     element = webElement,
                     Sucesso = true,
-                    table = dataTable
+                    table = null
                 };
             }
 
@@ -175,9 +184,10 @@ namespace AutomacoesProjetos
             IWebElement webElement = webDriverWait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/app-root/app-translation/div/app-translation-box/div[1]/div[1]/div[2]/div[2]/div/app-context-box/div/div/app-context-item[1]/div/div[1]/div/div/span[1]")));
             // IWebElement element = driver.FindElement(By.XPath("/html/body/app-root/app-translation/div/app-translation-box/div[1]/div[1]/div[2]/div[2]/div/app-context-box/div/div/app-context-item[1]/div/div[1]/div/div/span[1]"));
             string textoTraduzido = webElement.Text;
-            resultados.Add(textoOriginal + " em " + idioma + " é: " + textoTraduzido);
+           // resultados.Add(textoOriginal + " em " + idioma + " é: " + textoTraduzido);
         }
 
+        // Metodos do projeto temperatura:
         public EasyReturn.Web SelecionaItem(TypeElement typeElement, string element, string cidade, int timeout = 3)
         {
             try
@@ -246,7 +256,7 @@ namespace AutomacoesProjetos
                 };
             }
         }
-
+        // Metodos do projeto conversao moedas:
         public EasyReturn.Web GetListData(TypeElement typeElement, string element, string iso, int timeout = 3)
         {
             try
@@ -298,8 +308,6 @@ namespace AutomacoesProjetos
                 };
             }
         }
-
-        // Essa é a parte que que abre a pagina do conversor moedas 
 
 
     }
